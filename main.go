@@ -11,6 +11,7 @@ func SetupRouter() *gin.Engine {
 			"message": "Server is up!",
 		})
 	})
+	router.POST("/register", RegisterUser)
 	return router
 }
 
