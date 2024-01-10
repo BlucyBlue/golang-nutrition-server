@@ -43,3 +43,41 @@ func TestRegisterUser(t *testing.T) {
 	assert.Equal(t, http.StatusCreated, w.Code)
 	assert.Contains(t, w.Body.String(), "User registered successfully")
 }
+
+func TestLogin(t *testing.T) {
+	// Set up the router
+	router := SetupRouter()
+
+	// Create a request body
+	requestBody := bytes.NewBufferString(`{"username": "testuser", "password": "testpass"}`)
+
+	// Create a request
+	req, _ := http.NewRequest("POST", "/login", requestBody)
+	req.Header.Set("Content-Type", "application/json")
+
+	// Record the response
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	// Check the response
+	assert.Equal(t, http.StatusOK, w.Code)
+	// Further checks can be added to validate the response content, such as the presence of a token
+}
+
+func TestLogout(t *testing.T) {
+	// Set up the router
+	router := SetupRouter()
+
+	// Create a request
+	req, _ := http.NewRequest("POST", "/logout", nil)
+	// Set a valid token in the Authorization header
+	req.Header.Set("Authorization", "validToken")
+
+	// Record the response
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	// Check the response
+	assert.Equal(t, http.StatusOK, w.Code)
+	// Further checks can be added based on the logout logic
+}
