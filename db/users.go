@@ -6,6 +6,13 @@ import (
 	"log"
 )
 
+type User struct {
+	UserID   int    `db:"UserID"`
+	Username string `db:"Username"`
+	Email    string `db:"Email"`
+	Password string `db:"Password"`
+}
+
 func SaveUserToDatabase(pool *pgxpool.Pool, username, email, hashedPassword string) error {
 	ctx := context.Background()
 
@@ -20,4 +27,14 @@ func SaveUserToDatabase(pool *pgxpool.Pool, username, email, hashedPassword stri
 	}
 
 	return nil
+}
+
+// GetUserByUsername retrieves a user by username from the database
+func GetUserByUsername(pool *pgxpool.Pool, username string) (*User, error) {
+	var user User
+	err := pool.QueryRow(context.Background(), "SELECT UserID, Username, Email, PasswordHash FROM Users WHERE Username = $1", username).Scan(&user.Username, &user.Email, &user.Password)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
 }
