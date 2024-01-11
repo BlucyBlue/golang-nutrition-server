@@ -31,7 +31,6 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	// Connection string for your PostgreSQL database
 	connString := "postgres://username:password@localhost:5432/dbname"
 
 	// Establish a connection pool
@@ -60,7 +59,6 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	// Connection string for your PostgreSQL database
 	connString := "postgres://username:password@localhost:5432/dbname"
 
 	// Establish a connection pool
@@ -101,7 +99,6 @@ func Login(c *gin.Context) {
 func Logout(c *gin.Context) {
 	tokenValue := c.GetHeader("Authorization") // Assuming the token is sent in the Authorization header
 
-	// Connection string for your PostgreSQL database
 	connString := "postgres://username:password@localhost:5432/dbname"
 
 	// Establish a connection pool

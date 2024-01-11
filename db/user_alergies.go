@@ -1,10 +1,14 @@
 package db
 
-import "database/sql"
+import (
+	"context"
+	"github.com/jackc/pgx/v4/pgxpool"
+)
 
-func AddUserAllergy(db *sql.DB, userID int, allergyID int) error {
+func AddUserAllergy(pool *pgxpool.Pool, userID int, allergyID int) error {
+	ctx := context.Background()
 	query := `INSERT INTO UserAllergies (UserID, AllergyID) VALUES ($1, $2)`
-	_, err := db.Exec(query, userID, allergyID)
+	_, err := pool.Exec(ctx, query, userID, allergyID)
 	if err != nil {
 		return err
 	}
@@ -12,11 +16,13 @@ func AddUserAllergy(db *sql.DB, userID int, allergyID int) error {
 }
 
 
-func GetUserAllergies(db *sql.DB, userID int) ([]int, error) {
+func GetUserAllergies(pool *pgxpool.Pool, userID int) ([]int, error) {
 	var allergies []int
 
+	ctx := context.Background()
+
 	query := `SELECT AllergyID FROM UserAllergies WHERE UserID = $1`
-	rows, err := db.Query(query, userID)
+	rows, err := pool.Query(ctx, query, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +39,11 @@ func GetUserAllergies(db *sql.DB, userID int) ([]int, error) {
 	return allergies, nil
 }
 
-func RemoveUserAllergy(db *sql.DB, userID int, allergyID int) error {
+func RemoveUserAllergy(pool *pgxpool.Pool, userID int, allergyID int) error {
+	ctx := context.Background()
+
 	query := `DELETE FROM UserAllergies WHERE UserID = $1 AND AllergyID = $2`
-	_, err := db.Exec(query, userID, allergyID)
+	_, err := pool.Exec(ctx, query, userID, allergyID)
 	if err != nil {
 		return err
 	}
