@@ -12,6 +12,10 @@ func SetupRouter() *gin.Engine {
 		})
 	})
 	router.POST("/register", RegisterUser)
+	router.POST("/products", AddProductEndpoint)
+	router.GET("/products/:productID", GetProductByIDEndpoint)
+	router.PUT("/products", UpdateProductEndpoint)
+	router.DELETE("/products/:productID", DeleteProductEndpoint)
 	return router
 }
 

@@ -33,3 +33,17 @@ func DeleteProduct(dbPool *pgxpool.Pool, productID int) error {
 	_, err := dbPool.Exec(context.Background(), "DELETE FROM Products WHERE ProductID = $1", productID)
 	return err
 }
+
+// UpdateProduct updates the name and category of an existing product
+func UpdateProduct(dbPool *pgxpool.Pool, productID int, name, category string) error {
+	// Prepare the SQL statement
+	query := `UPDATE Products SET Name = $1, Category = $2 WHERE ProductID = $3`
+
+	// Execute the SQL statement
+	_, err := dbPool.Exec(context.Background(), query, name, category, productID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
