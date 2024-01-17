@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"log"
 	"net/http"
@@ -89,6 +90,25 @@ func TestUpdateProductEndpoint(t *testing.T) {
 	req, _ := http.NewRequest("PUT", "/products", requestBody)
 	req.Header.Set("Content-Type", "application/json")
 
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+
+}
+
+func TestDeleteProductEndpoint(t *testing.T) {
+	initTestDB()
+	defer dbPool.Close()
+
+	router := SetupRouter()
+
+	productID, err := addDummyProductForTesting("Dummy Product", "Dummy Category")
+	if err != nil {
+		t.Fatalf("Error adding dummy product: %v", err)
+	}
+
+	req, _ := http.NewRequest("DELETE", fmt.Sprintf("/products/%d", productID), nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
