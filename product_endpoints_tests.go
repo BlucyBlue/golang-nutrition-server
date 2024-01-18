@@ -115,3 +115,38 @@ func TestDeleteProductEndpoint(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 
 }
+
+func TestGetProductByIDEndpoint(t *testing.T) {
+	initTestDB()
+	defer dbPool.Close()
+
+	// Add a dummy product and get its ID
+	productID, err := addDummyProductForTesting("Dummy Product", "Dummy Category")
+	if err != nil {
+		t.Fatalf("Error adding dummy product: %v", err)
+	}
+
+	// Create a request to get the product by ID
+	req, _ := http.NewRequest("GET", fmt.Sprintf("/products/%d", productID), nil)
+	w := httptest.NewRecorder()
+
+	// Set up the router and serve the request
+	router := SetupRouter()
+	router.ServeHTTP(w, req)
+
+	// Check the response status code
+	assert.Equal(t, http.StatusOK, w.Code)
+
+	// Decode the response body into a product struct
+	var product db.Product
+	err = json.Unmarshal(w.Body.Bytes(), &product)
+	if err != nil {
+		t.Fatalf("Error decoding response: %v", err)
+	}
+
+	// Assert that the returned product matches the dummy product
+	assert.Equal(t, productID, product.ProductID)
+	assert.Equal(t, "Dummy Product", product.Name)
+	assert.Equal(t, "Dummy Category", product.Category)
+
+}
