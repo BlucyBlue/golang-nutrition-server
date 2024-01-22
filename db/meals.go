@@ -32,3 +32,28 @@ func GetMealByID(dbPool *pgxpool.Pool, mealID int) (*Meal, error) {
 
 	return meal, nil
 }
+
+// GetAllMeals fetches all meals from the database
+func GetAllMeals(dbPool *pgxpool.Pool) ([]Meal, error) {
+	var meals []Meal
+
+	rows, err := dbPool.Query(context.Background(), "SELECT MealID, Name, Description FROM Meals")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var meal Meal
+		if err := rows.Scan(&meal.MealID, &meal.Name, &meal.Description); err != nil {
+			return nil, err
+		}
+		meals = append(meals, meal)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return meals, nil
+}
