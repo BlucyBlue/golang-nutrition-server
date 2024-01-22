@@ -20,3 +20,15 @@ func CreateMeal(dbPool *pgxpool.Pool, name, description string) (int, error) {
 	}
 	return mealID, nil
 }
+
+// GetMealByID fetches a meal by its ID from the database
+func GetMealByID(dbPool *pgxpool.Pool, mealID int) (*Meal, error) {
+	meal := &Meal{}
+
+	err := dbPool.QueryRow(context.Background(), "SELECT MealID, Name, Description FROM Meals WHERE MealID = $1", mealID).Scan(&meal.MealID, &meal.Name, &meal.Description)
+	if err != nil {
+		return nil, err
+	}
+
+	return meal, nil
+}
