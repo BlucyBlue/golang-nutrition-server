@@ -76,3 +76,21 @@ func UpdateMeal(dbPool *pgxpool.Pool, mealID int, name, description string) erro
 
 	return nil
 }
+
+// DeleteMeal removes a meal from the database
+func DeleteMeal(dbPool *pgxpool.Pool, mealID int) error {
+	// Prepare the SQL statement
+	query := `DELETE FROM Meals WHERE MealID = $1`
+
+	// Execute the SQL statement
+	cmdTag, err := dbPool.Exec(context.Background(), query, mealID)
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() != 1 {
+		return errors.New("no rows were deleted")
+	}
+
+	return nil
+}
