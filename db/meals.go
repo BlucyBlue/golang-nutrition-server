@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/pkg/errors"
 )
 
 type Meal struct {
@@ -56,4 +57,22 @@ func GetAllMeals(dbPool *pgxpool.Pool) ([]Meal, error) {
 	}
 
 	return meals, nil
+}
+
+// UpdateMeal updates the details of an existing meal
+func UpdateMeal(dbPool *pgxpool.Pool, mealID int, name, description string) error {
+	// Prepare the SQL statement
+	query := `UPDATE Meals SET Name = $1, Description = $2 WHERE MealID = $3`
+
+	// Execute the SQL statement
+	cmdTag, err := dbPool.Exec(context.Background(), query, name, description, mealID)
+	if err != nil {
+		return err
+	}
+
+	if cmdTag.RowsAffected() != 1 {
+		return errors.New("no rows were updated")
+	}
+
+	return nil
 }
